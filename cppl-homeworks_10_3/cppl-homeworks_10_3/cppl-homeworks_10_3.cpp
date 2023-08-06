@@ -2,6 +2,13 @@
 
 #include <iostream>
 
+class Counter
+{
+public:
+    int a;
+    Counter(int in_a): a(in_a) {}
+};
+
 template <class T>
 class uniq_ptr
 {
@@ -11,6 +18,11 @@ public:
     uniq_ptr(Args&&... args)
     {
         ptr_ = new T(std::forward<Args>(args)...);
+        std::cout << "created object" << "\n";
+    }
+
+    uniq_ptr(T* a): ptr_(a)
+    {
         std::cout << "created object" << "\n";
     }
 
@@ -26,7 +38,7 @@ public:
         return *ptr_;
     }
 
-    int* release()
+    T* release()
     {
         T* temp = ptr_;
         ptr_ = nullptr;
@@ -61,14 +73,24 @@ int main()
     std::cout << "__________________"<<std::endl;
     uniq_ptr<int> ppp(100);
 
-    int* a = ppp.release();
+    
+    std::cout << "\n" << "RELEASE()_" << std::endl;
+    auto a = ppp.release();
     std::cout << "ppp.ptr_ = " << ppp.get_adress() << std::endl;
     std::cout << *a << " must be 100" << std::endl;
+    std::cout << "___________" << "\n" << std::endl;
 
-    int* ptrx=a;
-    std::cout << "ptrx = " << &ptrx << std::endl;
-    uniq_ptr <int*> ptrx_x(ptrx);
-    std::cout << "ptrx_x->ptrx = " << *ptrx_x << std::endl;
-    
+    //int* ptrx=a;
+    //std::cout << "ptrx = " << &ptrx << std::endl;
+    //uniq_ptr <int*> ptrx_x(ptrx);
+    //std::cout << "ptrx_x->ptrx = " << *ptrx_x << std::endl;
+
+    std::cout << "\n" << "Counter* ptrx " << std::endl;
+    Counter* ptrx = new Counter(3);
+    std::cout << "ptrx = " << ptrx << std::endl;
+    uniq_ptr<Counter> c(ptrx);
+    std::cout << "c->ptrx = " << c.release() << std::endl;
+    std::cout << "___________" << "\n" << std::endl;
+
     return 0;
 }
